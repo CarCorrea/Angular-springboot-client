@@ -1,0 +1,62 @@
+<ul class="alert alert-danger" *ngIf="errors?.length > 0">
+    <li *ngFor="let err of errors">
+        {{ err }}
+    </li>
+</ul>
+<div class="card bg-dark text-white">
+    <div class="card-header">{{ title }}</div>
+    <div class="card-body">
+        <form #clientForm="ngForm">
+            <div class="form-group row">
+                <label for="name" class="col-form-label col-sm-2">Name</label>
+                <div class="col-sm-6 py-2">
+                    <input type="text" class="form-control" [(ngModel)]="client.name" name="name" #name="ngModel"> <!--required minlength="2"-->
+                    <div class="alert alert-danger" *ngIf="name.invalid && (name.dirty || name.touched)">
+                        <div *ngIf="name.errors.required">
+                            Client's name is a required field
+                        </div>
+                        <div *ngIf="name.errors.minlength">
+                            Client's name must be at least 2 characters long
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="lastName" class="col-form-label col-sm-2">Last Name</label>
+                <div class="col-sm-6 py-2">
+                    <input type="text" class="form-control" [(ngModel)]="client.lastName" name="lastName" #lastName="ngModel"> <!--required minlength="2"-->
+                    <div class="alert alert-danger" *ngIf="lastName.invalid && (lastName.dirty || lastName.touched)">
+                        <div *ngIf="lastName.errors.required">
+                            Client's last name is a required field
+                        </div>
+                        <div *ngIf="lastName.errors.minlength">
+                            Client's lLast name must be at least 2 characters long
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="email" class="col-form-label col-sm-2">Email</label>
+                <div class="col-sm-6 py-2">
+                    <input type="text" class="form-control" [(ngModel)]="client.email" name="email" #email="ngModel"><!--required email-->
+                    <div class="alert alert-danger" *ngIf="email.invalid && (email.dirty || email.touched)">
+                        <div *ngIf="email.errors.required">
+                            Client's email is a required field
+                        </div>
+                        <div *ngIf="email.errors.email">
+                            Client's email must be valid
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-sm-6 py-2">
+                    <button class="btn btn-primary" role="button" (click)='create()' *ngIf= "!client.id else elseBlock" [disabled]="!clientForm.form.valid">Create</button>
+                    <ng-template #elseBlock>
+                        <button class="btn btn-primary" role="button" (click)="updateClient()" [disabled]="!clientForm.form.valid">Edit</button>
+                    </ng-template>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
