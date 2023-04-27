@@ -13,8 +13,7 @@ export class FormComponent implements OnInit {
 
   public client: Client = new Client();
   public title: string = "Create Client";
-  public errors: string[] = [];
-
+  public errorList: string[] = [];
   constructor(private clientService: ClientService, private router: Router, private activatedRoute: ActivatedRoute) { }
 
   ngOnInit(): void {
@@ -41,24 +40,23 @@ export class FormComponent implements OnInit {
       Swal.fire('Client updated', `Client ${this.client.name} ${this.client.lastName} successfully updated!`, 'success')
     },
     err => {
-      this.errors = err.error.errors as string[];
+      this.errorList = err.error.errors as string[];
       console.error(err.error.errors);      
     }
     );
   }
 
-  public create(): void{
-    this.clientService.createClient(this.client).subscribe(
-      response => {
-        
+  create(): void{
+    this.clientService.createClient(this.client)
+    .subscribe(
+      client => {        
         this.router.navigate(['/clients'])
         Swal.fire('New client ', `Client ${this.client.name} ${this.client.lastName} successfully created!`, 'success')
       },
       err => {
-        this.errors = err.error.errors as string[];
+        this.errorList = err.error.errors as string [];
         console.error(err.error.errors);      
       }
-    )
+    );
   }
-
 }

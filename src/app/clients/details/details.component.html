@@ -1,0 +1,56 @@
+<div class="open-modal animation fadeIn" *ngIf="modalService.modal">
+    <div class="modal" tabindex="-1" style="display: block;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">{{ title }}</h5>
+                    <button (click)="closeModal()" type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm">
+
+                                <ul *ngIf="client" class="list-group text-dark mb-3">
+                                    <li class="list-group-item">{{client.name}}</li>
+                                    <li class="list-group-item">{{client.lastName}}</li>
+                                    <li class="list-group-item">{{client.email}}</li>
+                                    <li class="list-group-item">{{client.createAt | date:"fullDate"}}</li>
+                                </ul>
+
+                                <div class="input-group">
+                                    <input (change)="selectImage($event)" type="file" class="form-control"
+                                        id="inputGroupFile04" aria-describedby="inputGroupFileAddon04"
+                                        aria-label="Upload">
+                                    <button (click)="uploadImage()" [disabled]="!selectedImage"
+                                        class="btn btn btn-outline-info mx-2" type="button"
+                                        id="inputGroupFileAddon04">Upload</button>
+                                </div>
+                                <div *ngIf="progress > 0" class="progress" role="progressbar"
+                                    aria-label="Example with label" attr.aria-valuenow="{{progress}}" aria-valuemin="0"
+                                    aria-valuemax="100">
+                                    <div class="progress-bar bg-success" [ngStyle]="{width: progress + '%'}">
+                                        {{progress}}%
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="col-sm">
+                                <img *ngIf="client?.profilePic"
+                                    src="http://localhost:8080/api/v1/uploads/img/{{client.profilePic}}"
+                                    alt="{{client.profilePic}}" class="img-thumbnail rounded">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button (click)="closeModal()" type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

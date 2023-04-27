@@ -1,5 +1,5 @@
-<ul class="alert alert-danger" *ngIf="errors?.length > 0">
-    <li *ngFor="let err of errors">
+<ul class="alert alert-danger" *ngIf="errorList?.length > 0">
+    <li *ngFor="let err of errorList">
         {{ err }}
     </li>
 </ul>
@@ -30,7 +30,7 @@
                             Client's last name is a required field
                         </div>
                         <div *ngIf="lastName.errors.minlength">
-                            Client's lLast name must be at least 2 characters long
+                            Client's last name must be at least 2 characters long
                         </div>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
                             Client's email is a required field
                         </div>
                         <div *ngIf="email.errors.email">
-                            Client's email must be valid
+                            Client's email must have a valid format
                         </div>
                     </div>
                 </div>

@@ -1,8 +1,9 @@
-import { Injectable, OnInit } from '@angular/core';
-import { CLIENTS } from '../clients.json';
+import { Injectable } from '@angular/core';
+
+
 import { Client } from '../model/client';
-import { Observable, of, throwError } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { HttpClient, HttpEvent, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { map, catchError } from 'rxjs';
 import Swal from 'sweetalert2';
 import { Router } from '@angular/router';
@@ -12,24 +13,33 @@ import { Router } from '@angular/router';
 })
 export class ClientService {  
 
-  private urlEndPoint: string = 'http://localhost:8080/api/v1/clients';
+  private clientsUrlEndPoint: string = 'http://localhost:8080/api/v1/clients';
+  private baseurlEndPoint: string = 'http://localhost:8080/api/v1';
   private httpHeaders = new HttpHeaders({'Content-type' : 'application/json'});
 
   constructor(private http: HttpClient, private router: Router) { }
 
-  getClients(): Observable<Client[]>{
+  getClients(page: number): Observable<any[]>{
     //return of(CLIENTS);
-    return this.http.get(this.urlEndPoint).pipe(
-      map( response => response as Client[])
-    );
+    return this.http.get(this.clientsUrlEndPoint + '/page/' + page).pipe(
+      map((response: any) => {        
+        (response.content as Client[]).map(client => {
+          client.name = client.name.toUpperCase();                   
+          //client.createAt = formatDate(client.createAt, 'EEEE dd de MMMM, yyyy', 'es');
+          return client;
+        });
+        return response;
+        }  
+      )        
+    );   
   }
 
   createClient(client: Client): Observable<Client>{
-    return this.http.post<Client>(this.urlEndPoint, client,{headers: this.httpHeaders}).pipe(
+    return this.http.post<Client>(this.clientsUrlEndPoint, client,{headers: this.httpHeaders}).pipe(
       catchError(e => {        
 
         if(e.status==400){
-          return throwError(() => new Error(e));
+          return throwError(e);
         }  
 
         console.error(e.error.message);
@@ -40,7 +50,7 @@ export class ClientService {
   }
 
   getClient(id: Number): Observable<Client>{
-    return this.http.get<Client>(`${this.urlEndPoint}/${id}`).pipe(
+    return this.http.get<Client>(`${this.clientsUrlEndPoint}/${id}`).pipe(
       catchError(e =>{
         this.router.navigate(['/clients']);
         console.error(e.error.message);
@@ -51,11 +61,11 @@ export class ClientService {
   }
 
   updateClient(client: Client): Observable<Client>{
-    return this.http.put<Client>(`${this.urlEndPoint}/${client.id}`, client, {headers: this.httpHeaders}).pipe(
+    return this.http.put<Client>(`${this.clientsUrlEndPoint}/${client.id}`, client, {headers: this.httpHeaders}).pipe(
       catchError(e =>{
 
         if(e.status==400){
-          return throwError(() => new Error(e));
+          return throwError(e);
         }  
 
         console.error(e.error.message);
@@ -66,12 +76,24 @@ export class ClientService {
   }
 
   deleteClient(id: Number): Observable<Client>{
-    return this.http.delete<Client>(`${this.urlEndPoint}/${id}`, {headers: this.httpHeaders}).pipe(
+    return this.http.delete<Client>(`${this.clientsUrlEndPoint}/${id}`, {headers: this.httpHeaders}).pipe(
       catchError(e => {
         console.error(e.error.message);
         Swal.fire(e.error.message, e.error.error, 'error');
         return throwError(() => new Error(e));
       })
     );
+  }
+
+  uploadProfilePic(file: File, id): Observable<HttpEvent<{}>> {
+    let formData = new FormData();
+    formData.append("file", file);
+    formData.append("id", id);
+
+    const req = new HttpRequest('POST', `${this.clientsUrlEndPoint}/img`, formData, {
+      reportProgress: true
+    });
+
+    return this.http.request(req);
   }
 }
